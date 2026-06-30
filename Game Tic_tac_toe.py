@@ -7,6 +7,8 @@ pygame.init()
 WIDTH, HEIGHT = 400, 500
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tic Tac Toe PRO")
+click_sound = pygame.mixer.Sound("click.mp3")
+click_sound.set_volume(0.5)
 
 FONT = pygame.font.SysFont(None, 40)
 
@@ -27,7 +29,7 @@ ai_mode = False
 ai_level = "MUDAH"
 # SOUND (beep sederhana)
 def beep():
-    print("🔊 Beep")
+    click_sound.play()
 
 def draw_menu():
 
@@ -263,10 +265,12 @@ while True:
                 if btn_player.collidepoint(event.pos):
                     mode = "GAME"
                     ai_mode = False
+                    click_sound.play()
 
                 elif btn_ai.collidepoint(event.pos):
                     mode = "LEVEL"
                     ai_mode = True
+                    click_sound.play()
 
                 elif btn_exit.collidepoint(event.pos):
                     pygame.quit()
@@ -278,18 +282,21 @@ while True:
                 if 100 < y < 170:
                     ai_level = "EASY"
                     mode = "GAME"
+                    click_sound.play()
                 elif 180 < y < 250:
                     ai_level = "MEDIUM"
                     mode = "GAME"
+                    click_sound.play()
                 elif 260 < y < 330:
                     ai_level = "HARD"
                     mode = "GAME"
+                    click_sound.play()
 
         elif mode == "GAME":
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # 1. CEK DULU: Apakah yang diklik adalah tombol kembali?
                 if btn_back.collidepoint(event.pos):
-                    beep()
+                    click_sound.play()
                     reset()       # Bersihkan papan sebelum kembali
                     mode = "MENU" # Pindah ke Menu Utama
                 
@@ -309,12 +316,12 @@ while True:
                             game_over = True
                         else:
                             player = "O" if player == "X" else "X"
-                            if player == "X"
+                            if player == "X":
                                    giliran_text = "Giliran: X"
                                    giliran_color = BLUE 
-                        else:
-                                   giliran_text = "Giliran: O"
-                                   giliran_color = RED
+                            else:
+                                    giliran_text = "Giliran: O"
+                                    giliran_color = RED
                         # AI jalan
                         if ai_mode and player == "O" and not game_over:
                             ai_move()
@@ -334,7 +341,9 @@ while True:
     elif mode == "LEVEL":
         draw_LEVEL_menu()
     else:
-   draw_board()
- text_surface = FONT.render(giliran_text, True, giliran_color)
- screen.blit(text_surface, (20,20))
- pygame.display.update()
+        draw_board()
+
+    text_surface = FONT.render(giliran_text, True, giliran_color)
+    screen.blit(text_surface, (20,20))
+
+    pygame.display.update()
