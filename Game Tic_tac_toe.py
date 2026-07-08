@@ -7,7 +7,9 @@ import os
 
 pygame.init()
 
-WIDTH, HEIGHT = 400, 600
+WIDTH, HEIGHT = 400, 650
+OFFSET_Y = 60
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tic Tac Toe PRO")
 
@@ -19,6 +21,7 @@ click_sound = pygame.mixer.Sound(
 click_sound.set_volume(0.5)
 
 FONT = pygame.font.SysFont(None, 40)
+BIG_FONT = pygame.font.SysFont(None, 55)
 
 WHITE = (255,255,255)
 BLACK = (0,0,0)
@@ -82,32 +85,62 @@ def draw_menu():
     screen.blit(txt3,(145,320))
 
 def draw_LEVEL_menu():
+
     screen.fill(WHITE)
-    text1 = FONT.render("MUDAH", True, BLACK)
-    text2 = FONT.render("SEDANG", True, BLACK)
-    text3 = FONT.render("SULIT", True, BLACK)
-    screen.blit(text1, (130,120))
-    screen.blit(text2, (130,200))
-    screen.blit(text3, (130,280))
+
+    mouse = pygame.mouse.get_pos()
+
+    title = FONT.render("PILIH LEVEL AI", True, BLACK)
+    screen.blit(title, (80, 50))
+
+    global btn_easy
+    global btn_medium
+    global btn_hard
+    global btn_back
+
+    btn_easy = pygame.Rect(100, 130, 200, 50)
+    btn_medium = pygame.Rect(100, 220, 200, 50)
+    btn_hard = pygame.Rect(100, 310, 200, 50)
+    btn_back = pygame.Rect(100, 400, 200, 50)
+
+    color1 = BLUE if btn_easy.collidepoint(mouse) else BLACK
+    color2 = BLUE if btn_medium.collidepoint(mouse) else BLACK
+    color3 = BLUE if btn_hard.collidepoint(mouse) else BLACK
+    color4 = RED if btn_back.collidepoint(mouse) else BLACK
+
+    pygame.draw.rect(screen, color1, btn_easy, 3)
+    pygame.draw.rect(screen, color2, btn_medium, 3)
+    pygame.draw.rect(screen, color3, btn_hard, 3)
+    pygame.draw.rect(screen, color4, btn_back, 3)
+
+    txt1 = FONT.render("MUDAH", True, color1)
+    txt2 = FONT.render("SEDANG", True, color2)
+    txt3 = FONT.render("SULIT", True, color3)
+    txt4 = FONT.render("KEMBALI", True, color4)
+
+    screen.blit(txt1, (135, 140))
+    screen.blit(txt2, (125, 230))
+    screen.blit(txt3, (140, 320))
+    screen.blit(txt4, (120, 410))
 
 def draw_board():
     screen.fill(WHITE)
 
     # garis
     for i in range(1,3):
-        pygame.draw.line(screen, BLACK, (0,i*133),(400,i*133),4)
-        pygame.draw.line(screen, BLACK, (i*133,0),(i*133,400),4)
+        pygame.draw.line(screen, BLACK, (0, OFFSET_Y + i*133),(400, OFFSET_Y + i*133),4)
+        pygame.draw.line(screen, BLACK, (i*133, OFFSET_Y),(i*133,OFFSET_Y + 400),4)
     # bingkai luar papan
-    pygame.draw.rect(screen, BLACK, (0,0,400,400),4)
+    pygame.draw.rect(screen, BLACK, (0, OFFSET_Y,400,400),4)
 
     # X O
     for r in range(3):
         for c in range(3):
             if board[r][c] == "X":
-                pygame.draw.line(screen, RED, (c*133+20,r*133+20), (c*133+110,r*133+110),6)
-                pygame.draw.line(screen, RED, (c*133+110,r*133+20), (c*133+20,r*133+110),6)
+                pygame.draw.line(screen, RED, (c*133+20, OFFSET_Y + r*133+20), (c*133+110, OFFSET_Y + r*133+110),6)
+                pygame.draw.line(screen, RED, (c*133+110, OFFSET_Y + r*133+20), (c*133+20, OFFSET_Y + r*133+110),6)
             elif board[r][c] == "O":
-                pygame.draw.circle(screen, BLUE, (c*133+66,r*133+66),40,6)
+                pygame.draw.circle(screen, BLUE, (c*133+66, OFFSET_Y + r*133+66),40,6)
 
     # garis menang
     if winner_line:
@@ -122,9 +155,9 @@ def draw_board():
 
         global btn_continue, btn_menu, btn_exit_game
 
-        btn_continue = pygame.Rect(20, 440, 110, 45)
-        btn_menu = pygame.Rect(145, 440, 110, 45)
-        btn_exit_game = pygame.Rect(270, 440, 110, 45)
+        btn_continue = pygame.Rect(20, 535, 110, 45)
+        btn_menu = pygame.Rect(145, 535, 110, 45)
+        btn_exit_game = pygame.Rect(270, 535, 110, 45)
 
         color1 = BLUE if btn_continue.collidepoint(mouse) else BLACK
         color2 = BLUE if btn_menu.collidepoint(mouse) else BLACK
@@ -138,9 +171,9 @@ def draw_board():
         txt2 = pygame.font.SysFont(None,30).render("MENU",True,color2)
         txt3 = pygame.font.SysFont(None,30).render("KELUAR",True,color3)
 
-        screen.blit(txt1,(35,453))
-        screen.blit(txt2,(170,453))
-        screen.blit(txt3,(285,453))
+        screen.blit(txt1,(35,550))
+        screen.blit(txt2,(170,550))
+        screen.blit(txt3,(285,550))
 
     # ------------------ AKHIR KODE BARU YANG DITAMBAHKAN ------------------
 def check_win():
@@ -148,18 +181,18 @@ def check_win():
 
     for i in range(3):
         if board[i][0]==board[i][1]==board[i][2]!="":
-            winner_line = ((0,i*133+66),(400,i*133+66))
+            winner_line = ((0, OFFSET_Y + i*133+66),(400, OFFSET_Y + i*133+66))
             return True
         if board[0][i]==board[1][i]==board[2][i]!="":
-            winner_line = ((i*133+66,0),(i*133+66,400))
+            winner_line = ((i*133+66, OFFSET_Y),(i*133+66, OFFSET_Y + 400))
             return True
 
     if board[0][0]==board[1][1]==board[2][2]!="":
-        winner_line = ((0,0),(400,400))
+        winner_line = ((0, OFFSET_Y),(400, OFFSET_Y + 400))
         return True
 
     if board[0][2]==board[1][1]==board[2][0]!="":
-        winner_line = ((400,0),(0,400))
+        winner_line = ((400, OFFSET_Y),(0, OFFSET_Y + 400))
         return True
 
     return False
@@ -270,13 +303,13 @@ def minimax(is_max):
         return best
 
 def reset():
-    global board, player, game_over, winner_line, winner
+    global board, player, game_over, winner_line, winner, draw_game
     board = [["" for _ in range(3)] for _ in range(3)]
     player = "X"
     game_over = False
     winner_line = None
     winner = ""
-
+    draw_game = False
 # LOOP
 while True:
 
@@ -305,18 +338,20 @@ while True:
 
         elif mode == "LEVEL":
             if event.type == pygame.MOUSEBUTTONDOWN:
-                x,y = event.pos
-                if 100 < y < 170:
+                if btn_easy.collidepoint(event.pos):
                     ai_level = "EASY"
                     mode = "GAME"
                     click_sound.play()
-                elif 180 < y < 250:
+                elif btn_medium.collidepoint(event.pos):
                     ai_level = "MEDIUM"
                     mode = "GAME"
                     click_sound.play()
-                elif 260 < y < 330:
+                elif btn_hard.collidepoint(event.pos):
                     ai_level = "HARD"
                     mode = "GAME"
+                    click_sound.play()
+                elif btn_back.collidepoint(event.pos):
+                    mode = "MENU"
                     click_sound.play()
 
         elif mode == "GAME":
@@ -344,10 +379,10 @@ while True:
                 # ==========================
                 # JIKA GAME BELUM SELESAI
                 # ==========================
-                elif event.pos[1] < 400:
+                elif OFFSET_Y <= event.pos[1] < OFFSET_Y + 400: # type: ignore
 
                     x, y = event.pos
-                    r = y // 133
+                    r = (y - OFFSET_Y) // 133 # type: ignore
                     c = x // 133
 
                     if board[r][c] == "":
@@ -361,7 +396,13 @@ while True:
 
                     else:
                         player = "O" if player == "X" else "X"
+                        draw_game = True
 
+                    if draw_game and not game_over:
+                        if all(board[i][j] != "" for i in range(3) for j in range(3)):
+                            game_over = True
+                            winner = "seri"
+                            print("seri")
                     if ai_mode and player == "O" and not game_over:
                         ai_thinking = True
                         ai_start_time = pygame.time.get_ticks()
@@ -410,18 +451,18 @@ while True:
 
         giliran_text = "Giliran : O"
         giliran_color = RED
-    if mode == "GAME":
+
+    if mode == "GAME" and not game_over:
         text_surface = FONT.render(giliran_text, True, giliran_color)
-        screen.blit(text_surface, (20,430))
+        screen.blit(text_surface, (20,485))
 
-        if game_over:
-
-            winner_text = FONT.render(
-                f"PEMENANG : {winner}",
-                True,
-                GREEN
-            )
-
-            screen.blit(winner_text, (90, 200))
+    if game_over:
+        
+        if winner == "seri":
+            text = BIG_FONT.render("Seri!", True, RED)
+            screen.blit(text, (140, 15))
+        else:
+            text = BIG_FONT.render(f"Pemenang: {winner}", True, GREEN)
+            screen.blit(text, (45, 15))
 
     pygame.display.update()
