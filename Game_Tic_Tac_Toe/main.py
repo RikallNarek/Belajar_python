@@ -1,4 +1,4 @@
-from tkinter.tix import STATUS
+import tkinter.tix
 
 import pygame
 import sys
